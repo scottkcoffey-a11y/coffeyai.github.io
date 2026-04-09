@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoffeyAI — Custom AI Chatbots for Your Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #f1f3f5;
+    --text: #111111;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --border: #e5e7eb;
+    --card-bg: #ffffff;
+    --card-border: #e5e7eb;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-glow: rgba(59,130,246,0.15);
+    --green: #10b981;
+    --purple: #8b5cf6;
+    --orange: #f59e0b;
+    --rose: #f43f5e;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+    --hero-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    --hero-text: #f0f0f0;
+    --hero-muted: #94a3b8;
+    --nav-bg: rgba(255,255,255,0.85);
+    --nav-border: rgba(0,0,0,0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a25;
+      --text: #f0f0f0;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border: #262630;
+      --card-bg: #16161f;
+      --card-border: #2a2a35;
+      --accent-glow: rgba(59,130,246,0.2);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+      --hero-bg: linear-gradient(135deg, #0a0a0f 0%, #111827 50%, #0a0a0f 100%);
+      --nav-bg: rgba(10,10,15,0.85);
+      --nav-border: rgba(255,255,255,0.06);
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ═══════ NAV ═══════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--nav-border);
+    transition: all 0.3s ease;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  .nav-logo {
+    font-size: 1.3rem; font-weight: 800; color: var(--text);
+    text-decoration: none; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo .dot { width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; }
+  .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;
+    font-weight: 500; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent); color: white !important; padding: 0.5rem 1.2rem;
+    border-radius: 8px; font-weight: 600 !important; transition: all 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+  /* ═══════ HERO ═══════ */
+  .hero {
+    background: var(--hero-bg);
+    padding: 10rem 2rem 6rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  /* Grid background */
+  .hero::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+    padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.8rem;
+    color: #60a5fa; font-weight: 600; margin-bottom: 2rem;
+    animation: fadeInUp 0.6s ease both;
+  }
+  .hero-badge .pulse {
+    width: 8px; height: 8px; background: #10b981; border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    font-weight: 900; line-height: 1.1; letter-spacing: -0.03em;
+    color: var(--hero-text);
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s ease 0.1s both;
+  }
+  .hero h1 .gradient {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--hero-muted); max-width: 600px; margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    animation: fadeInUp 0.6s ease 0.2s both;
+  }
+  .hero-buttons {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeInUp 0.6s ease 0.3s both;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.85rem 2rem; background: #3b82f6; color: white;
+    border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+  }
+  .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(59,130,246,0.4); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.85rem 2rem; background: transparent; color: var(--hero-muted);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 10px;
+    font-size: 1rem; font-weight: 600; text-decoration: none; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.3); color: white; background: rgba(255,255,255,0.05); }
+
+  /* ═══════ SOCIAL PROOF BAR ═══════ */
+  .proof-bar {
+    background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem; text-align: center;
+  }
+  .proof-inner {
+    max-width: 800px; margin: 0 auto;
+    display: flex; justify-content: center; align-items: center; gap: 3rem; flex-wrap: wrap;
+  }
+  .proof-stat {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .proof-stat .number { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+  .proof-stat .label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+
+  /* ═══════ SECTIONS SHARED ═══════ */
+  section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 1rem;
+  }
+  .section-subtitle {
+    font-size: 1.05rem; color: var(--text-secondary); max-width: 600px; line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+
+  /* ═══════ FEATURES BENTO ═══════ */
+  #features { background: var(--bg); }
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1.25rem;
+  }
+  .bento-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .bento-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .bento-card.wide { grid-column: span 2; }
+  .bento-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 1.25rem;
+  }
+  .bento-icon.blue { background: rgba(59,130,246,0.1); color: #3b82f6; }
+  .bento-icon.green { background: rgba(16,185,129,0.1); color: #10b981; }
+  .bento-icon.purple { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+  .bento-icon.orange { background: rgba(245,158,11,0.1); color: #f59e0b; }
+  .bento-icon.rose { background: rgba(244,63,94,0.1); color: #f43f5e; }
+  .bento-icon.teal { background: rgba(20,184,166,0.1); color: #14b8a6; }
+  .bento-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .bento-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ═══════ HOW IT WORKS ═══════ */
+  #how-it-works { background: var(--bg-secondary); }
+  .steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+    counter-reset: step;
+  }
+  .step {
+    text-align: center; position: relative;
+    counter-increment: step;
+  }
+  .step-number {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; font-weight: 800; margin: 0 auto 1.25rem;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.25);
+  }
+  .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+  /* connector line */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 26px;
+    left: calc(50% + 34px); right: calc(-50% + 34px);
+    height: 2px; background: var(--border);
+  }
+
+  /* ═══════ DEMO ═══════ */
+  #demo {
+    background: var(--hero-bg); color: var(--hero-text);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  #demo::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(59,130,246,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  #demo .section-subtitle { color: var(--hero-muted); margin: 0 auto 1rem; }
+  .demo-note {
+    font-size: 0.85rem; color: var(--hero-muted); opacity: 0.7;
+    margin-bottom: 2.5rem;
+  }
+  .demo-window {
+    max-width: 800px; margin: 0 auto;
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative; z-index: 1;
+  }
+  .demo-titlebar {
+    background: #0f172a; padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .demo-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .demo-dot.red { background: #f43f5e; }
+  .demo-dot.yellow { background: #f59e0b; }
+  .demo-dot.green { background: #10b981; }
+  .demo-url {
+    flex: 1; text-align: center; font-size: 0.75rem; color: #64748b;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .demo-body {
+    height: 500px; display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .demo-body iframe {
+    width: 100%; height: 100%; border: none;
+  }
+  .demo-placeholder {
+    text-align: center; padding: 2rem;
+  }
+  .demo-placeholder p { color: #64748b; font-size: 0.9rem; margin-bottom: 1rem; }
+  .demo-placeholder a {
+    color: #60a5fa; font-weight: 600; text-decoration: none;
+  }
+  .demo-placeholder a:hover { text-decoration: underline; }
+
+  /* ═══════ PRICING ═══════ */
+  #pricing { background: var(--bg); }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  }
+  .price-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 2.5rem 2rem;
+    transition: all 0.3s ease; position: relative;
+  }
+  .price-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .price-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(59,130,246,0.15);
+  }
+  .price-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: white; padding: 0.25rem 1rem;
+    border-radius: 100px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+  }
+  .price-card .tier { font-size: 0.85rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .price-card .price { font-size: 2.8rem; font-weight: 900; margin-bottom: 0.25rem; letter-spacing: -0.03em; }
+  .price-card .price-note { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .price-card ul { list-style: none; margin-bottom: 2rem; }
+  .price-card li {
+    font-size: 0.9rem; color: var(--text-secondary); padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 0.5rem;
+  }
+  .price-card li:last-child { border: none; }
+  .price-card li::before { content: '\2713'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .price-card .card-cta {
+    display: block; text-align: center; padding: 0.8rem;
+    border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .price-card .card-cta.primary { background: var(--accent); color: white; }
+  .price-card .card-cta.primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .price-card .card-cta.outline {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .price-card .card-cta.outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ═══════ FAQ ═══════ */
+  #faq { background: var(--bg-secondary); }
+  .faq-grid { max-width: 700px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 1.5rem 0;
+  }
+  .faq-q {
+    font-weight: 700; font-size: 1rem; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: color 0.2s;
+  }
+  .faq-q:hover { color: var(--accent); }
+  .faq-q .toggle {
+    font-size: 1.3rem; color: var(--text-muted); transition: transform 0.3s;
+    flex-shrink: 0; margin-left: 1rem;
+  }
+  .faq-item.open .faq-q .toggle { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding-top: 1rem; }
+  .faq-a p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; }
+
+  /* ═══════ FINAL CTA ═══════ */
+  .final-cta {
+    background: var(--hero-bg); color: var(--hero-text);
+    text-align: center; padding: 6rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .final-cta h2 {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1rem;
+    letter-spacing: -0.02em; position: relative; z-index: 1;
+  }
+  .final-cta p {
+    color: var(--hero-muted); font-size: 1.1rem; margin-bottom: 2.5rem;
+    max-width: 500px; margin-left: auto; margin-right: auto;
+    position: relative; z-index: 1;
+  }
+  .final-cta .btn-primary { position: relative; z-index: 1; font-size: 1.05rem; padding: 1rem 2.5rem; }
+
+  /* ═══════ FOOTER ═══════ */
+  footer {
+    background: var(--bg); border-top: 1px solid var(--border);
+    padding: 2rem; text-align: center;
+  }
+  footer p { font-size: 0.8rem; color: var(--text-muted); }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ═══════ ANIMATIONS ═══════ */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══════ MOBILE NAV ═══════ */
+  .mobile-toggle {
+    display: none; background: none; border: none; cursor: pointer;
+    width: 28px; height: 20px; position: relative;
+  }
+  .mobile-toggle span {
+    display: block; width: 100%; height: 2px; background: var(--text);
+    position: absolute; left: 0; transition: all 0.3s;
+  }
+  .mobile-toggle span:nth-child(1) { top: 0; }
+  .mobile-toggle span:nth-child(2) { top: 9px; }
+  .mobile-toggle span:nth-child(3) { top: 18px; }
+
+  /* ═══════ RESPONSIVE ═══════ */
+  @media (max-width: 900px) {
+    .bento-grid { grid-template-columns: 1fr 1fr; }
+    .bento-card.wide { grid-column: span 2; }
+    .steps { grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem; }
+    .step::after { display: none; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    .price-card.featured { order: -1; }
+  }
+  @media (max-width: 640px) {
+    .bento-grid { grid-template-columns: 1fr; }
+    .bento-card.wide { grid-column: span 1; }
+    .steps { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+    .proof-inner { gap: 2rem; }
+    .nav-links { display: none; }
+    .mobile-toggle { display: block; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--nav-bg); backdrop-filter: blur(20px);
+      padding: 1rem 2rem 1.5rem; border-bottom: 1px solid var(--nav-border);
+      gap: 1rem;
+    }
+    .hero { padding: 8rem 1.5rem 4rem; }
+    section { padding: 3.5rem 1.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span class="dot"></span> CoffeyAI</a>
+    <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#demo">Live Demo</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="mailto:scott.k.coffey@gmail.com?subject=AI%20Chatbot%20Inquiry" class="nav-cta">Get a Quote</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="pulse"></span> Now accepting new clients</div>
+    <h1>AI Chatbots That <span class="gradient">Sell For You</span></h1>
+    <p>Custom GPT-powered chatbots trained on your business. They answer questions, qualify leads, and capture customers — 24/7, on autopilot.</p>
+    <div class="hero-buttons">
+      <a href="#demo" class="btn-primary">See a Live Demo &#8595;</a>
+      <a href="mailto:scott.k.coffey@gmail.com?subject=AI%20Chatbot%20Inquiry" class="btn-secondary">Get a Free Quote</a>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="proof-bar">
+  <div class="proof-inner">
+    <div class="proof-stat">
+      <span class="number">GPT-4o</span>
+      <span class="label">Powered</span>
+    </div>
+    <div class="proof-stat">
+      <span class="number">24/7</span>
+      <span class="label">Always Online</span>
+    </div>
+    <div class="proof-stat">
+      <span class="number">&lt; 48hrs</span>
+      <span class="label">Demo Turnaround</span>
+    </div>
+    <div class="proof-stat">
+      <span class="number">1 Line</span>
+      <span class="label">To Install</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything your website<br>chatbot should be.</h2>
+    <p class="section-subtitle">Not a scripted FAQ bot. A real AI assistant that understands your business and converts visitors into customers.</p>
+    <div class="bento-grid">
+      <div class="bento-card wide reveal">
+        <div class="bento-icon blue">&#x1F9E0;</div>
+        <h3>Real AI, Not Scripts</h3>
+        <p>Powered by GPT-4o and trained on your actual products, services, and policies. It doesn't match keywords — it understands context and gives accurate, natural answers to anything a customer asks.</p>
+      </div>
+      <div class="bento-card reveal">
+        <div class="bento-icon green">&#x1F3AF;</div>
+        <h3>Qualifies Leads 24/7</h3>
+        <p>Naturally learns about each visitor's project, needs, and timeline — then captures their contact info for your sales team. Works while you sleep.</p>
+      </div>
+      <div class="bento-card reveal">
+        <div class="bento-icon purple">&#x1F3A8;</div>
+        <h3>Your Brand, Your Voice</h3>
+        <p>We analyze your communication style, terminology, and tone to make the bot sound like your best employee — not a generic AI.</p>
+      </div>
+      <div class="bento-card reveal">
+        <div class="bento-icon orange">&#x1F4CA;</div>
+        <h3>Leads Dashboard</h3>
+        <p>Every captured lead is logged with name, email, phone, project details, and customer type. Export to CSV anytime.</p>
+      </div>
+      <div class="bento-card wide reveal">
+        <div class="bento-icon teal">&#x1F50C;</div>
+        <h3>One-Line Install</h3>
+        <p>Drop a single script tag into your website footer. That's it. The chatbot appears on every page with your brand colors, fully trained and ready to go. No redesign, no plugins, no IT department needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">Process</div>
+    <h2 class="section-title">Live in 48 hours. Seriously.</h2>
+    <p class="section-subtitle">From first call to working chatbot on your website — here's how it works.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">1</div>
+        <h3>Discovery Call</h3>
+        <p>30 minutes. We learn your business, your customers, and how you want the bot to talk.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">2</div>
+        <h3>We Build It</h3>
+        <p>We train the AI on your products, FAQs, and brand voice. You review a live demo.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">3</div>
+        <h3>You Test It</h3>
+        <p>Try to stump it. Give us feedback. We refine until it sounds exactly right.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">4</div>
+        <h3>Go Live</h3>
+        <p>One line of code on your site. Leads start flowing into your dashboard immediately.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section id="demo">
+  <div class="section-inner" style="position:relative;z-index:1;">
+    <div class="section-label" style="text-align:center;">Live Demo</div>
+    <h2 class="section-title" style="text-align:center;color:var(--hero-text);">See it in action.</h2>
+    <p class="section-subtitle" style="text-align:center;margin-left:auto;margin-right:auto;">This is a real AI chatbot we built for a custom vent cover manufacturer. Ask it anything — product specs, pricing, materials. Watch it qualify you as a lead.</p>
+    <p class="demo-note">Built in under 48 hours from a single discovery session.</p>
+    <div class="demo-window">
+      <div class="demo-titlebar">
+        <span class="demo-dot red"></span>
+        <span class="demo-dot yellow"></span>
+        <span class="demo-dot green"></span>
+        <span class="demo-url">steelcrest-bot-production.up.railway.app</span>
+      </div>
+      <div class="demo-body">
+        <iframe src="https://steelcrest-bot-production.up.railway.app/" loading="lazy" title="SteelCrest AI Chatbot Demo"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple, transparent pricing.</h2>
+    <p class="section-subtitle">No monthly fees for the chatbot itself. You pay once to build it, then just the hosting and AI costs (typically $20-50/mo).</p>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="tier">Starter</div>
+        <div class="price">$500</div>
+        <div class="price-note">One-time build</div>
+        <ul>
+          <li>Custom AI chatbot trained on your business</li>
+          <li>Up to 50 FAQ / knowledge items</li>
+          <li>Embeddable chat widget</li>
+          <li>Brand color matching</li>
+          <li>1 week of post-launch support</li>
+        </ul>
+        <a href="mailto:scott.k.coffey@gmail.com?subject=Starter%20Plan%20Inquiry" class="card-cta outline">Get Started</a>
+      </div>
+      <div class="price-card featured reveal">
+        <div class="tier">Professional</div>
+        <div class="price">$1,500</div>
+        <div class="price-note">One-time build</div>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>Lead qualification + capture</li>
+          <li>Real-time leads dashboard</li>
+          <li>Full brand voice training</li>
+          <li>Multi-page / multi-audience routing</li>
+          <li>1 month of support + refinements</li>
+        </ul>
+        <a href="mailto:scott.k.coffey@gmail.com?subject=Professional%20Plan%20Inquiry" class="card-cta primary">Get Started</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="tier">Enterprise</div>
+        <div class="price">$3,000</div>
+        <div class="price-note">One-time build</div>
+        <ul>
+          <li>Everything in Professional</li>
+          <li>CRM / email integration</li>
+          <li>Multi-language support</li>
+          <li>Custom analytics dashboard</li>
+          <li>Priority support + training session</li>
+          <li>3 months of support + refinements</li>
+        </ul>
+        <a href="mailto:scott.k.coffey@gmail.com?subject=Enterprise%20Plan%20Inquiry" class="card-cta outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common questions.</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          How is this different from ChatGPT or a regular chatbot?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>Generic chatbots give generic answers. Our bots are trained specifically on your products, services, pricing, and brand voice. They know your business as well as your best salesperson — and they never sleep.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          What do I need to provide?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>Your website URL, any product docs or FAQs you have, and a 30-minute call so we can learn your brand voice. We handle everything else — training, building, deploying.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Will it actually match my brand's tone of voice?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>Yes. We analyze your existing communications — website copy, emails, social media — to build voice guidelines. During testing, you tell us what sounds right and what doesn't, and we refine until it's perfect.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          How much does it cost to run monthly?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>Hosting and AI API costs are typically $20-50/month depending on traffic. For most small businesses, it's under $30. There are no monthly fees from us — you pay once to build.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          Can I update the chatbot's knowledge later?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>Absolutely. New products, updated pricing, seasonal promotions — we can update the knowledge base anytime. Clients on Professional and Enterprise plans get this included in their support period.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          How do I install it on my website?
+          <span class="toggle">+</span>
+        </div>
+        <div class="faq-a"><p>One line of code in your website's footer. If you can paste text, you can install it. We'll walk you through it — takes about 2 minutes.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <h2>Ready to put AI to work<br>for your business?</h2>
+  <p>Get a free consultation and a working demo built on your actual business — in 48 hours or less.</p>
+  <a href="mailto:scott.k.coffey@gmail.com?subject=AI%20Chatbot%20Inquiry" class="btn-primary">Get Your Free Demo &#8594;</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 CoffeyAI. Built by <a href="mailto:scott.k.coffey@gmail.com">Scott Coffey</a>.</p>
+</footer>
+
+<!-- Scroll reveal animation -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth nav background on scroll
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      nav.style.boxShadow = '0 1px 12px rgba(0,0,0,0.1)';
+    } else {
+      nav.style.boxShadow = 'none';
+    }
+  });
+
+  // Close mobile nav on link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>
